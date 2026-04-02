@@ -133,8 +133,18 @@ Servicios realizados: 0 / 100
 
 <input type="text" id="buscar" placeholder="Busca tu código (ej: AC023)">
 
-<table id="tabla"></table>
-
+<div id="resultadoCliente" style="
+background:white;
+color:black;
+width:80%;
+margin:auto;
+padding:20px;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+">
+Busca tu código para ver tu estado
+</div>
 
 <script>
 
@@ -144,71 +154,90 @@ fetch(url)
 .then(res=>res.text())
 .then(data=>{
 
-let filas=data.split("\n").slice(1)
+let filas=data.split("\n")
 
 let clientes=[]
 
-filas.forEach(fila=>{
 
-let columnas=fila.split(",")
+// 📊 TOTAL SERVICIOS = CELDA I2
+let fila2=filas[1].split(",")
+
+let totalServicios=parseInt(fila2[8]) || 0
+
+
+document.getElementById("contador").innerText=
+"Servicios realizados: "+totalServicios+" / 100"
+
+
+document.getElementById("barra").style.width=
+totalServicios+"%"
+
+
+// 👤 LISTA CLIENTES DESDE FILA 2 HACIA ABAJO
+
+for(let i=1;i<filas.length;i++){
+
+let columnas=filas[i].split(",")
 
 if(columnas[0]){
 
 clientes.push({
 
 nombre:columnas[0].replace(/"/g,""),
+
 codigo:columnas[1].replace(/"/g,""),
-entradas:Number(columnas[6])
+
+referidos:parseInt(columnas[5])||0,
+
+entradas:parseInt(columnas[6])||0
 
 })
 
 }
 
-})
+}
 
-clientes.sort((a,b)=>b.entradas-a.entradas)
 
-document.getElementById("contador").innerText=
-
-"Servicios realizados: "+clientes.length+" / 100"
-
-document.getElementById("barra").style.width=
-
-clientes.length+"%"
-
-let tabla=""
-
-clientes.forEach((cliente,i)=>{
-
-let clase=i<3?"top":""
-
-tabla+=
-
-"<tr class='"+clase+"'><td>"+cliente.nombre+"-"+cliente.codigo+"</td><td>"+cliente.entradas+" entradas</td></tr>"
-
-})
-
-document.getElementById("tabla").innerHTML=tabla
-
+// 🔍 BUSCADOR PANEL CLIENTE
 
 document.getElementById("buscar").addEventListener("input",function(){
 
-let filtro=this.value.toUpperCase()
+let texto=this.value.toUpperCase()
 
-let filasTabla=document.querySelectorAll("#tabla tr")
+let resultado=clientes.find(cliente=>
 
-filasTabla.forEach(fila=>{
+(cliente.nombre+"-"+cliente.codigo)
+.toUpperCase()
+.includes(texto)
 
-let texto=fila.innerText.toUpperCase()
+)
 
-fila.style.display=texto.includes(filtro)?"":"none"
+if(resultado){
+
+document.getElementById("resultadoCliente").innerHTML=
+
+`
+<b>${resultado.nombre}-${resultado.codigo}</b><br>
+Referidos: ${resultado.referidos}<br>
+Entradas: ${resultado.entradas}<br>
+Estado: Participando ✅
+`
+
+}
+
+else{
+
+document.getElementById("resultadoCliente").innerHTML="Cliente no encontrado"
+
+}
 
 })
 
-})
 
 })
 
+
+// ⏳ COUNTDOWN
 
 const fechaFinal=new Date("May 30, 2026 23:59:59").getTime()
 
@@ -228,7 +257,5 @@ document.getElementById("countdown").innerText=
 
 },1000)
 
-</script>
 
-</body>
-</html>
+</script>
