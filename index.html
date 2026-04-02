@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gran Sorteo Smart TV</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(#0d47a1,#1565c0);
+color:white;
+text-align:center;
+padding:20px;
+}
+
+h1{
+font-size:32px;
+animation:fadeIn 2s ease;
+}
+
+.progress-bar{
+width:100%;
+background:#ccc;
+border-radius:20px;
+overflow:hidden;
+margin:20px 0;
+}
+
+.progress{
+height:25px;
+background:red;
+width:0%;
+transition:1s;
+}
+
+table{
+width:100%;
+background:white;
+color:black;
+border-radius:10px;
+overflow:hidden;
+}
+
+td{
+padding:10px;
+}
+
+input{
+padding:10px;
+width:80%;
+margin:10px;
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Gran sorteo: limpia tu aire y gana un Smart TV</h1>
+
+<h2>Santo Domingo Este</h2>
+
+<h3 id="contador">Servicios realizados: 0 / 100</h3>
+
+<div class="progress-bar">
+<div class="progress" id="barra"></div>
+</div>
+
+<input type="text" id="buscar" placeholder="Busca tu código: AC023">
+
+<table id="tabla"></table>
+
+<script>
+
+const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=0&single=true&output=csv"
+
+fetch(url)
+.then(res=>res.text())
+.then(data=>{
+
+let filas=data.split("\n").slice(1)
+
+let total=filas.length
+
+document.getElementById("contador").innerText="Servicios realizados: "+total+" / 100"
+
+document.getElementById("barra").style.width=(total)+"%"
+
+let tabla=""
+
+filas.forEach(fila=>{
+
+let col=fila.split(",")
+
+tabla+="<tr><td>"+col[0]+"-"+col[1]+"</td><td>"+col[6]+" entradas</td></tr>"
+
+})
+
+document.getElementById("tabla").innerHTML=tabla
+
+})
+
+</script>
+
+</body>
+</html>
