@@ -105,6 +105,8 @@ Gran sorteo: limpia tu aire y gana un Smart TV
 
 <div class="subtitulo">
 
+<div id="contador">
+  
 Válido en Santo Domingo Este
 
 </div>
@@ -115,7 +117,6 @@ Nota: El premio se desbloquea al llegar a 100 servicios realizados
 
 </div>
 
-<div id="contador">
 
 Servicios realizados: 0 / 100
 
@@ -141,42 +142,52 @@ fetch(url)
 .then(res=>res.text())
 .then(data=>{
 
-let filas=data.split("\n").slice(1)
+let filas=data.split("\n")
 
-filas.sort((a,b)=>{
+let clientes=[]
 
-let A=a.split(",")[6]
-let B=b.split(",")[6]
+filas.forEach(fila=>{
 
-return B-A
+let columnas=fila.split(",")
+
+if(columnas.length>6 && columnas[0]!=""){
+
+clientes.push({
+nombre:columnas[0],
+codigo:columnas[1],
+entradas:Number(columnas[6])
+})
+
+}
 
 })
 
-let total=filas.length
+clientes.sort((a,b)=>b.entradas-a.entradas)
+
+let total=clientes.length
+
+if(total>100) total=100
 
 document.getElementById("contador").innerText=
-
-"Servicios realizados: "+total+" / 100"
+"Servicios realizados: "+clientes.length+" / 100"
 
 document.getElementById("barra").style.width=
-
-(total)+"%"
+(clientes.length)+"%"
 
 let tabla=""
 
-filas.forEach((fila,i)=>{
-
-let col=fila.split(",")
+clientes.forEach((cliente,i)=>{
 
 let clase=i<3?"top":""
 
 tabla+=
-
-"<tr class='"+clase+"'><td>"+col[0]+"-"+col[1]+"</td><td>"+col[6]+" entradas</td></tr>"
+"<tr class='"+clase+"'><td>"+cliente.nombre+"-"+cliente.codigo+"</td><td>"+cliente.entradas+" entradas</td></tr>"
 
 })
 
 document.getElementById("tabla").innerHTML=tabla
+
+
 document.getElementById("buscar").addEventListener("input",function(){
 
 let filtro=this.value.toUpperCase()
@@ -192,6 +203,7 @@ fila.style.display=texto.includes(filtro)?"":"none"
 })
 
 })
+
 })
 
 const fechaFinal=new Date("May 30, 2026 23:59:59").getTime()
@@ -207,13 +219,8 @@ let dias=Math.floor(distancia/(1000*60*60*24))
 let horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60))
 
 document.getElementById("countdown").innerText=
-
 "Tiempo restante: "+dias+" días "+horas+" horas"
 
 },1000)
 
 </script>
-
-</body>
-
-</html>
