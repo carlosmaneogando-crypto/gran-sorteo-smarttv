@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
@@ -19,15 +20,21 @@ padding:0;
 }
 
 header{
-padding:20px;
-font-size:28px;
+font-size:32px;
 font-weight:bold;
-animation:fadeIn 2s ease;
+margin-top:20px;
 }
 
 .subtitulo{
-font-size:18px;
+font-size:20px;
 margin-bottom:10px;
+}
+
+.countdown{
+font-size:28px;
+font-weight:bold;
+color:#FFD700;
+margin:20px;
 }
 
 .aviso{
@@ -52,7 +59,7 @@ transition:1s;
 }
 
 #contador{
-font-size:20px;
+font-size:22px;
 margin:15px;
 }
 
@@ -86,11 +93,6 @@ background:gold !important;
 font-weight:bold;
 }
 
-@keyframes fadeIn{
-from{opacity:0;}
-to{opacity:1;}
-}
-
 </style>
 
 </head>
@@ -105,11 +107,11 @@ Gran sorteo: limpia tu aire y gana un Smart TV
 
 <div class="subtitulo">
 
-<div id="contador">
-  
 Válido en Santo Domingo Este
 
 </div>
+
+<div class="countdown" id="countdown"></div>
 
 <div class="aviso">
 
@@ -117,6 +119,7 @@ Nota: El premio se desbloquea al llegar a 100 servicios realizados
 
 </div>
 
+<div id="contador">
 
 Servicios realizados: 0 / 100
 
@@ -132,7 +135,6 @@ Servicios realizados: 0 / 100
 
 <table id="tabla"></table>
 
-<div id="countdown"></div>
 
 <script>
 
@@ -142,7 +144,7 @@ fetch(url)
 .then(res=>res.text())
 .then(data=>{
 
-let filas=data.split("\n")
+let filas=data.split("\n").slice(1)
 
 let clientes=[]
 
@@ -150,12 +152,14 @@ filas.forEach(fila=>{
 
 let columnas=fila.split(",")
 
-if(columnas.length>6 && columnas[0]!=""){
+if(columnas[0]){
 
 clientes.push({
-nombre:columnas[0],
-codigo:columnas[1],
+
+nombre:columnas[0].replace(/"/g,""),
+codigo:columnas[1].replace(/"/g,""),
 entradas:Number(columnas[6])
+
 })
 
 }
@@ -164,15 +168,13 @@ entradas:Number(columnas[6])
 
 clientes.sort((a,b)=>b.entradas-a.entradas)
 
-let total=clientes.length
-
-if(total>100) total=100
-
 document.getElementById("contador").innerText=
+
 "Servicios realizados: "+clientes.length+" / 100"
 
 document.getElementById("barra").style.width=
-(clientes.length)+"%"
+
+clientes.length+"%"
 
 let tabla=""
 
@@ -181,6 +183,7 @@ clientes.forEach((cliente,i)=>{
 let clase=i<3?"top":""
 
 tabla+=
+
 "<tr class='"+clase+"'><td>"+cliente.nombre+"-"+cliente.codigo+"</td><td>"+cliente.entradas+" entradas</td></tr>"
 
 })
@@ -206,6 +209,7 @@ fila.style.display=texto.includes(filtro)?"":"none"
 
 })
 
+
 const fechaFinal=new Date("May 30, 2026 23:59:59").getTime()
 
 setInterval(()=>{
@@ -219,8 +223,12 @@ let dias=Math.floor(distancia/(1000*60*60*24))
 let horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60))
 
 document.getElementById("countdown").innerText=
-"Tiempo restante: "+dias+" días "+horas+" horas"
+
+"⏳ Tiempo restante: "+dias+" días "+horas+" horas"
 
 },1000)
 
 </script>
+
+</body>
+</html>
