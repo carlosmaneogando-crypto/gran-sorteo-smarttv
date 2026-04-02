@@ -1,56 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Gran Sorteo Smart TV</title>
 
 <style>
 
 body{
 font-family: Arial;
-background: linear-gradient(#0d47a1,#1565c0);
+background: linear-gradient(180deg,#0d47a1,#1565c0);
 color:white;
 text-align:center;
-padding:20px;
+margin:0;
+padding:0;
 }
 
-h1{
-font-size:32px;
+header{
+padding:20px;
+font-size:28px;
+font-weight:bold;
 animation:fadeIn 2s ease;
 }
 
-.progress-bar{
-width:100%;
-background:#ccc;
-border-radius:20px;
-overflow:hidden;
-margin:20px 0;
+.subtitulo{
+font-size:18px;
+margin-bottom:10px;
 }
 
-.progress{
-height:25px;
-background:red;
+.aviso{
+color:red;
+font-weight:bold;
+margin:10px;
+}
+
+.progreso-container{
+width:90%;
+margin:auto;
+background:#eee;
+border-radius:30px;
+overflow:hidden;
+}
+
+.progreso{
+height:30px;
+background:linear-gradient(90deg,#00c6ff,#0072ff);
 width:0%;
 transition:1s;
 }
 
+#contador{
+font-size:20px;
+margin:15px;
+}
+
+input{
+padding:12px;
+width:80%;
+border-radius:10px;
+border:none;
+margin:15px;
+}
+
 table{
-width:100%;
+width:95%;
+margin:auto;
 background:white;
 color:black;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
 }
 
 td{
-padding:10px;
+padding:12px;
 }
 
-input{
-padding:10px;
-width:80%;
-margin:10px;
+tr:nth-child(even){
+background:#f5f5f5;
+}
+
+.top{
+background:gold !important;
+font-weight:bold;
 }
 
 @keyframes fadeIn{
@@ -64,19 +97,41 @@ to{opacity:1;}
 
 <body>
 
-<h1>Gran sorteo: limpia tu aire y gana un Smart TV</h1>
+<header>
 
-<h2>Santo Domingo Este</h2>
+Gran sorteo: limpia tu aire y gana un Smart TV
 
-<h3 id="contador">Servicios realizados: 0 / 100</h3>
+</header>
 
-<div class="progress-bar">
-<div class="progress" id="barra"></div>
+<div class="subtitulo">
+
+Válido en Santo Domingo Este
+
 </div>
 
-<input type="text" id="buscar" placeholder="Busca tu código: AC023">
+<div class="aviso">
+
+Nota: El premio se desbloquea al llegar a 100 servicios realizados
+
+</div>
+
+<div id="contador">
+
+Servicios realizados: 0 / 100
+
+</div>
+
+<div class="progreso-container">
+
+<div class="progreso" id="barra"></div>
+
+</div>
+
+<input type="text" id="buscar" placeholder="Busca tu código (ej: AC023)">
 
 <table id="tabla"></table>
+
+<div id="countdown"></div>
 
 <script>
 
@@ -88,19 +143,36 @@ fetch(url)
 
 let filas=data.split("\n").slice(1)
 
+filas.sort((a,b)=>{
+
+let A=a.split(",")[6]
+let B=b.split(",")[6]
+
+return B-A
+
+})
+
 let total=filas.length
 
-document.getElementById("contador").innerText="Servicios realizados: "+total+" / 100"
+document.getElementById("contador").innerText=
 
-document.getElementById("barra").style.width=(total)+"%"
+"Servicios realizados: "+total+" / 100"
+
+document.getElementById("barra").style.width=
+
+(total)+"%"
 
 let tabla=""
 
-filas.forEach(fila=>{
+filas.forEach((fila,i)=>{
 
 let col=fila.split(",")
 
-tabla+="<tr><td>"+col[0]+"-"+col[1]+"</td><td>"+col[6]+" entradas</td></tr>"
+let clase=i<3?"top":""
+
+tabla+=
+
+"<tr class='"+clase+"'><td>"+col[0]+"-"+col[1]+"</td><td>"+col[6]+" entradas</td></tr>"
 
 })
 
@@ -108,7 +180,26 @@ document.getElementById("tabla").innerHTML=tabla
 
 })
 
+const fechaFinal=new Date("May 30, 2026 23:59:59").getTime()
+
+setInterval(()=>{
+
+let ahora=new Date().getTime()
+
+let distancia=fechaFinal-ahora
+
+let dias=Math.floor(distancia/(1000*60*60*24))
+
+let horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60))
+
+document.getElementById("countdown").innerText=
+
+"Tiempo restante: "+dias+" días "+horas+" horas"
+
+},1000)
+
 </script>
 
 </body>
+
 </html>
