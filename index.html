@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sorteo Smart TV</title>
+<title>Gran Sorteo Smart TV</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg,#0f172a,#1e293b);
   color: white;
   display: flex;
@@ -22,14 +24,52 @@ body {
   border-radius: 20px;
   padding: 25px;
   margin: 20px;
-  width: 320px;
+  width: 360px;
   box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
   animation: fadeIn 1s ease forwards;
+}
+
+.header-card {
+  text-align: center;
+}
+
+.main-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.note {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-top: 10px;
+}
+
+.countdown {
+  font-size: 22px;
+  margin-top: 15px;
+  font-weight: bold;
 }
 
 .title {
   font-size: 22px;
   margin-bottom: 15px;
+}
+
+.progress-table {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.progress-table td {
+  padding: 6px;
 }
 
 .progress-bar {
@@ -38,7 +78,7 @@ body {
   border-radius: 20px;
   background: #334155;
   overflow: hidden;
-  margin: 10px 0;
+  margin-top: 10px;
 }
 
 .progress-fill {
@@ -46,11 +86,6 @@ body {
   width: 0%;
   background: linear-gradient(90deg,#22c55e,#4ade80);
   transition: width 1s ease;
-}
-
-.status {
-  font-size: 18px;
-  margin-top: 10px;
 }
 
 .table {
@@ -75,18 +110,53 @@ body {
 </head>
 <body>
 
-<div class="card">
-  <div class="title">📊 Progreso del Sorteo</div>
-  <div id="contador">Cargando...</div>
-  <div class="progress-bar">
-    <div class="progress-fill" id="barra"></div>
-  </div>
-  <div class="status" id="estado"></div>
+<div class="card header-card">
+
+<div class="main-title">🔥Gran Sorteo Competitivo🔥</div>
+
+<div class="subtitle">
+Limpia Tu Aire Acondicionado y Gana un Smart TV 📺
+</div>
+
+<div class="note">
+Nota: el premio solo se desbloquea al cumplir la meta de 100 clientes antes del tiempo limite.
+</div>
+
+<div class="countdown" id="countdown">
+⌛Tiempo restante: cargando...⌛
+</div>
+
 </div>
 
 <div class="card">
-  <div class="title">🏆 Ranking</div>
-  <table class="table" id="ranking"></table>
+
+<div class="title">📊 Progreso del Sorteo</div>
+
+<table class="progress-table">
+<tr>
+<td id="realizados">--</td>
+<td id="faltantes">--</td>
+<td id="estado">--</td>
+</tr>
+<tr style="font-size:14px; opacity:0.7;">
+<td>Servicios realizados</td>
+<td>Faltantes</td>
+<td>Estado</td>
+</tr>
+</table>
+
+<div class="progress-bar">
+<div class="progress-fill" id="barra"></div>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">🏆 Ranking</div>
+
+<table class="table" id="ranking"></table>
+
 </div>
 
 <script>
@@ -96,50 +166,85 @@ const estadoCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDY
 const rankingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1573239677&single=true&output=csv";
 
 async function cargarEstado() {
-  const res = await fetch(estadoCSV);
-  const text = await res.text();
 
-  const filas = text.split("\n");
-  const datos = filas[1].split(",");
+const res = await fetch(estadoCSV);
+const text = await res.text();
 
-  const realizados = parseInt(datos[0]);
-  const faltantes = parseInt(datos[1]);
-  const estado = datos[2];
+const filas = text.trim().split("\n");
 
-  document.getElementById("contador").innerText = `Servicios realizados: ${realizados}/100`;
+const datos = filas[1].split(",");
 
-  const porcentaje = (realizados/100)*100;
-  document.getElementById("barra").style.width = porcentaje + "%";
+const realizados = Number(datos[0]);
+const faltantes = Number(datos[1]);
+const estado = datos[2];
 
-  document.getElementById("estado").innerText = `Estado del premio: ${estado}`;
+if(!isNaN(realizados)){
+
+ document.getElementById("realizados").innerText = realizados;
+ document.getElementById("faltantes").innerText = faltantes;
+ document.getElementById("estado").innerText = estado;
+
+ const porcentaje = (realizados/100)*100;
+
+ document.getElementById("barra").style.width = porcentaje + "%";
+
+}
+
 }
 
 async function cargarRanking() {
-  const res = await fetch(rankingCSV);
-  const text = await res.text();
 
-  const filas = text.split("\n").slice(0,10);
+const res = await fetch(rankingCSV);
+const text = await res.text();
 
-  let html="";
+const filas = text.split("\n").slice(0,10);
 
-  filas.forEach(f => {
-    const col = f.split(",");
+let html="";
 
-    if(col[0]){
-      html += `
-      <tr>
-        <td>${col[0]}</td>
-        <td>👥 ${col[1]}</td>
-        <td>🎟 ${col[2]}</td>
-      </tr>`;
-    }
-  });
+filas.forEach(f => {
 
-  document.getElementById("ranking").innerHTML = html;
+const col = f.split(",");
+
+if(col[0]){
+
+html += `
+<tr>
+<td>${col[0]}</td>
+<td>👥 ${col[1]}</td>
+<td>🎟 ${col[2]}</td>
+</tr>`;
+
+}
+
+});
+
+ document.getElementById("ranking").innerHTML = html;
+
+}
+
+function iniciarCountdown(){
+
+const fechaObjetivo = new Date();
+fechaObjetivo.setMonth(fechaObjetivo.getMonth()+2);
+
+setInterval(()=>{
+
+const ahora = new Date();
+const diferencia = fechaObjetivo - ahora;
+
+const dias = Math.floor(diferencia/(1000*60*60*24));
+const horas = Math.floor((diferencia/(1000*60*60))%24);
+
+ document.getElementById("countdown").innerText =
+`⌛Tiempo restante: ${dias} días ${horas} horas⌛`;
+
+},1000);
+
 }
 
 cargarEstado();
 cargarRanking();
+iniciarCountdown();
 
 </script>
 
