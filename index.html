@@ -1,262 +1,228 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gran Sorteo Smart TV</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gran Sorteo Competitivo</title>
 
 <style>
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg,#0f172a,#1e293b);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px;
+
+body{
+ font-family: Arial, sans-serif;
+ background:#0f172a;
+ color:white;
+ text-align:center;
+ padding:20px;
 }
 
-.card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  padding: 25px;
-  margin: 20px;
-  width: 360px;
-  box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
-  animation: fadeIn 1s ease forwards;
+.container{
+ background:#1e293b;
+ border-radius:20px;
+ padding:30px;
+ max-width:700px;
+ margin:auto;
+ box-shadow:0px 0px 20px rgba(0,0,0,0.5);
 }
 
-.header-card {
-  text-align: center;
+h1{
+ font-size:38px;
+ margin-bottom:10px;
 }
 
-.main-title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 32px;
-  font-weight: bold;
+h2{
+ font-size:22px;
+ margin-top:0;
 }
 
-.subtitle {
-  font-size: 18px;
-  margin-top: 10px;
+.timer{
+ font-size:26px;
+ margin-top:20px;
 }
 
-.note {
-  font-size: 14px;
-  opacity: 0.85;
-  margin-top: 10px;
+.progress-box{
+ margin-top:30px;
+ font-size:22px;
 }
 
-.countdown {
-  font-size: 22px;
-  margin-top: 15px;
-  font-weight: bold;
+.progress-bar{
+ width:100%;
+ background:#334155;
+ height:30px;
+ border-radius:15px;
+ overflow:hidden;
+ margin-top:10px;
 }
 
-.title {
-  font-size: 22px;
-  margin-bottom: 15px;
+.progress{
+ height:100%;
+ width:0%;
+ background:#22c55e;
+ transition:1s;
 }
 
-.progress-table {
-  width: 100%;
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 10px;
+table{
+ width:100%;
+ margin-top:20px;
+ border-collapse:collapse;
 }
 
-.progress-table td {
-  padding: 6px;
+td{
+ padding:12px;
+ font-size:20px;
 }
 
-.progress-bar {
-  width: 100%;
-  height: 18px;
-  border-radius: 20px;
-  background: #334155;
-  overflow: hidden;
-  margin-top: 10px;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg,#22c55e,#4ade80);
-  transition: width 1s ease;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table td {
-  padding: 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.table tr:hover {
-  background: rgba(255,255,255,0.05);
-}
-
-@keyframes fadeIn {
-  from {opacity:0; transform:translateY(15px);} 
-  to {opacity:1; transform:translateY(0);} 
-}
 </style>
+
 </head>
 <body>
 
-<div class="card header-card">
+<div class="container">
 
-<div class="main-title">🔥Gran Sorteo Competitivo🔥</div>
+<h1>🔥Gran Sorteo Competitivo🔥</h1>
 
-<div class="subtitle">
-Limpia Tu Aire Acondicionado y Gana un Smart TV 📺
-</div>
+<h2>Limpia Tu Aire Acondicionado y Gana un Smart TV 📺</h2>
 
-<div class="note">
+<p>
 Nota: el premio solo se desbloquea al cumplir la meta de 100 clientes antes del tiempo limite.
+</p>
+
+<div class="timer">
+⌛Tiempo restante:
+<span id="contador">cargando...</span>
 </div>
 
-<div class="countdown" id="countdown">
-⌛Tiempo restante: cargando...⌛
-</div>
 
-</div>
+<div class="progress-box">
 
-<div class="card">
+📊 Progreso del Sorteo:
 
-<div class="title">📊 Progreso del Sorteo</div>
+<table>
 
-<table class="progress-table">
+<tr>
+<td>Servicios realizados</td>
+<td>Faltantes</td>
+<td>Estado</td>
+</tr>
+
 <tr>
 <td id="realizados">--</td>
 <td id="faltantes">--</td>
 <td id="estado">--</td>
 </tr>
-<tr style="font-size:14px; opacity:0.7;">
-<td>Servicios realizados</td>
-<td>Faltantes</td>
-<td>Estado</td>
-</tr>
+
 </table>
 
 <div class="progress-bar">
-<div class="progress-fill" id="barra"></div>
+<div id="barra" class="progress"></div>
 </div>
 
 </div>
 
-<div class="card">
-
-<div class="title">🏆 Ranking</div>
-
-<table class="table" id="ranking"></table>
-
 </div>
+
 
 <script>
 
-const estadoCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
+/* =============================
+   CONTADOR REGRESIVO
+============================= */
 
-const rankingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1573239677&single=true&output=csv";
+const fechaFinal = new Date();
 
-async function cargarEstado() {
+fechaFinal.setMonth(fechaFinal.getMonth()+2);
 
-const res = await fetch(estadoCSV);
-let text = await res.text();
+function actualizarContador(){
 
-// limpiar BOM invisible de Google Sheets si existe
-text = text.replace(/^﻿/,"");
+ const ahora = new Date();
 
-const filas = text.trim().split("
-");
+ const diferencia = fechaFinal - ahora;
 
-// detectar separador automático
-const separador = filas[0].includes(";") ? ";" : ",";
+ if(diferencia<=0){
 
-// normalmente la fila 1 es encabezado y la fila 2 tiene los datos
-let datos = filas[1].split(separador);
+  document.getElementById("contador").innerText="Tiempo terminado";
 
-// limpieza adicional de caracteres invisibles
-const realizados = Number(datos[0].replace(/
-/g,"").trim());
-const faltantes = Number(datos[1].replace(/
-/g,"").trim());
-const estado = datos[2].replace(/
-/g,"").trim();
+  return;
 
-if(!isNaN(realizados)){
+ }
 
- document.getElementById("realizados").innerText = realizados;
- document.getElementById("faltantes").innerText = faltantes;
- document.getElementById("estado").innerText = estado;
+ const dias = Math.floor(diferencia/(1000*60*60*24));
 
- const porcentaje = (realizados/100)*100;
+ const horas = Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
 
- document.getElementById("barra").style.width = porcentaje + "%";
+ const minutos = Math.floor((diferencia%(1000*60*60))/(1000*60));
+
+ const segundos = Math.floor((diferencia%(1000*60))/1000);
+
+ document.getElementById("contador").innerText=
+ dias+"d "+horas+"h "+minutos+"m "+segundos+"s";
 
 }
 
+setInterval(actualizarContador,1000);
+
+actualizarContador();
+
+
+/* =============================
+   ESTADO DEL PREMIO (CSV)
+============================= */
+
+const estadoCSV =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
+
+
+async function cargarEstadoPremio(){
+
+ try{
+
+  const res = await fetch(estadoCSV);
+
+  if(!res.ok) return;
+
+  let text = await res.text();
+
+  text = text.replace(/^\uFEFF/,"");
+
+  const filas = text.trim().split("\n");
+
+  if(filas.length<2) return;
+
+  const separador = filas[0].includes(";") ? ";" : ",";
+
+  const datos = filas[1].split(separador);
+
+  const realizados = Number(datos[0].replace(/\r/g,"").trim());
+
+  const faltantes = Number(datos[1].replace(/\r/g,"").trim());
+
+  const estado = datos[2].replace(/\r/g,"").trim();
+
+
+  if(!isNaN(realizados)){
+
+   document.getElementById("realizados").innerText=realizados;
+
+   document.getElementById("faltantes").innerText=faltantes;
+
+   document.getElementById("estado").innerText=estado;
+
+   const porcentaje=(realizados/100)*100;
+
+   document.getElementById("barra").style.width=porcentaje+"%";
+
+  }
+
+ }catch(error){
+
+  console.log("Error leyendo CSV:",error);
+
+ }
+
 }
 
-async function cargarRanking() {
-
-const res = await fetch(rankingCSV);
-const text = await res.text();
-
-const filas = text.split("\n").slice(0,10);
-
-let html="";
-
-filas.forEach(f => {
-
-const col = f.split(",");
-
-if(col[0]){
-
-html += `
-<tr>
-<td>${col[0]}</td>
-<td>👥 ${col[1]}</td>
-<td>🎟 ${col[2]}</td>
-</tr>`;
-
-}
-
-});
-
- document.getElementById("ranking").innerHTML = html;
-
-}
-
-function iniciarCountdown(){
-
-const fechaObjetivo = new Date();
-fechaObjetivo.setMonth(fechaObjetivo.getMonth()+2);
-
-setInterval(()=>{
-
-const ahora = new Date();
-const diferencia = fechaObjetivo - ahora;
-
-const dias = Math.floor(diferencia/(1000*60*60*24));
-const horas = Math.floor((diferencia/(1000*60*60))%24);
-
- document.getElementById("countdown").innerText =
-`⌛Tiempo restante: ${dias} días ${horas} horas⌛`;
-
-},1000);
-
-}
-
-cargarEstado();
-cargarRanking();
-iniciarCountdown();
+cargarEstadoPremio();
 
 </script>
 
