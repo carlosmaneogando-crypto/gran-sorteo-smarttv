@@ -176,9 +176,9 @@ const filas = text.trim().split("\n");
 const separador = filas[1].includes(";") ? ";" : ",";
 const datos = filas[1].split(separador);
 
-const realizados = Number(datos[0]);
-const faltantes = Number(datos[1]);
-const estado = datos[2];
+const realizados = Number(datos[0].replace(/\r/g,"").trim());
+const faltantes = Number(datos[1].replace(/\r/g,"").trim());
+const estado = datos[2].replace(/\r/g,"").trim();
 
 if(!isNaN(realizados)){
 
