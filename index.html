@@ -10,66 +10,56 @@
 <style>
 
 body{
- font-family: Arial, sans-serif;
+ font-family:Arial;
  background:#0f172a;
  color:white;
  text-align:center;
- padding:20px;
 }
 
 .container{
- background:#1e293b;
- border-radius:20px;
- padding:30px;
- max-width:700px;
+ max-width:900px;
  margin:auto;
- box-shadow:0px 0px 20px rgba(0,0,0,0.5);
+ background:#1e293b;
+ padding:30px;
+ border-radius:20px;
 }
 
 h1{
- font-size:38px;
- margin-bottom:10px;
+ font-size:42px;
 }
 
 h2{
- font-size:22px;
- margin-top:0;
+ font-size:24px;
 }
 
 .timer{
  font-size:26px;
- margin-top:20px;
-}
-
-.progress-box{
- margin-top:30px;
- font-size:22px;
+ margin-top:15px;
 }
 
 .progress-bar{
  width:100%;
- background:#334155;
  height:30px;
- border-radius:15px;
- overflow:hidden;
+ background:#334155;
+ border-radius:20px;
  margin-top:10px;
+ overflow:hidden;
 }
 
 .progress{
  height:100%;
  width:0%;
  background:#22c55e;
- transition:1s;
 }
 
 table{
  width:100%;
- margin-top:20px;
+ margin-top:30px;
  border-collapse:collapse;
 }
 
 td{
- padding:12px;
+ padding:10px;
  font-size:20px;
 }
 
@@ -94,9 +84,7 @@ Nota: el premio solo se desbloquea al cumplir la meta de 100 clientes antes del 
 </div>
 
 
-<div class="progress-box">
-
-📊 Progreso del Sorteo:
+<h2>📊 Progreso del Sorteo</h2>
 
 <table>
 
@@ -118,42 +106,40 @@ Nota: el premio solo se desbloquea al cumplir la meta de 100 clientes antes del 
 <div id="barra" class="progress"></div>
 </div>
 
-</div>
+
+<h2>🏆 Ranking de Participantes</h2>
+
+<table id="ranking"></table>
+
 
 </div>
 
 
 <script>
 
-/* =============================
+/* =====================
    CONTADOR REGRESIVO
-============================= */
+===================== */
 
-const fechaFinal = new Date();
-
+const fechaFinal=new Date();
 fechaFinal.setMonth(fechaFinal.getMonth()+2);
 
 function actualizarContador(){
 
- const ahora = new Date();
-
- const diferencia = fechaFinal - ahora;
+ const ahora=new Date();
+ const diferencia=fechaFinal-ahora;
 
  if(diferencia<=0){
 
-  document.getElementById("contador").innerText="Tiempo terminado";
-
-  return;
+ document.getElementById("contador").innerText="Tiempo terminado";
+ return;
 
  }
 
- const dias = Math.floor(diferencia/(1000*60*60*24));
-
- const horas = Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
-
- const minutos = Math.floor((diferencia%(1000*60*60))/(1000*60));
-
- const segundos = Math.floor((diferencia%(1000*60))/1000);
+ const dias=Math.floor(diferencia/(1000*60*60*24));
+ const horas=Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
+ const minutos=Math.floor((diferencia%(1000*60*60))/(1000*60));
+ const segundos=Math.floor((diferencia%(1000*60))/1000);
 
  document.getElementById("contador").innerText=
  dias+"d "+horas+"h "+minutos+"m "+segundos+"s";
@@ -161,68 +147,81 @@ function actualizarContador(){
 }
 
 setInterval(actualizarContador,1000);
-
 actualizarContador();
 
 
-/* =============================
-   ESTADO DEL PREMIO (CSV)
-============================= */
+/* =====================
+   ESTADO PREMIO CSV
+===================== */
 
-const estadoCSV =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
+const estadoCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
 
+async function cargarEstado(){
 
-async function cargarEstadoPremio(){
+ const res=await fetch(estadoCSV);
+ let text=await res.text();
 
- try{
+ text=text.replace(/^\uFEFF/,"");
 
-  const res = await fetch(estadoCSV);
+ const filas=text.trim().split("\n");
 
-  if(!res.ok) return;
+ const separador=filas[0].includes(";")?";":",";
 
-  let text = await res.text();
+ const datos=filas[1].split(separador);
 
-  text = text.replace(/^\uFEFF/,"");
+ const realizados=Number(datos[0].trim());
+ const faltantes=Number(datos[1].trim());
+ const estado=datos[2].trim();
 
-  const filas = text.trim().split("\n");
+ document.getElementById("realizados").innerText=realizados;
+ document.getElementById("faltantes").innerText=faltantes;
+ document.getElementById("estado").innerText=estado;
 
-  if(filas.length<2) return;
+ const porcentaje=(realizados/100)*100;
 
-  const separador = filas[0].includes(";") ? ";" : ",";
-
-  const datos = filas[1].split(separador);
-
-  const realizados = Number(datos[0].replace(/\r/g,"").trim());
-
-  const faltantes = Number(datos[1].replace(/\r/g,"").trim());
-
-  const estado = datos[2].replace(/\r/g,"").trim();
-
-
-  if(!isNaN(realizados)){
-
-   document.getElementById("realizados").innerText=realizados;
-
-   document.getElementById("faltantes").innerText=faltantes;
-
-   document.getElementById("estado").innerText=estado;
-
-   const porcentaje=(realizados/100)*100;
-
-   document.getElementById("barra").style.width=porcentaje+"%";
-
-  }
-
- }catch(error){
-
-  console.log("Error leyendo CSV:",error);
-
- }
+ document.getElementById("barra").style.width=porcentaje+"%";
 
 }
 
-cargarEstadoPremio();
+cargarEstado();
+
+
+/* =====================
+   RANKING CSV
+===================== */
+
+const rankingCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=0&single=true&output=csv";
+
+async function cargarRanking(){
+
+ const res=await fetch(rankingCSV);
+ let text=await res.text();
+
+ text=text.replace(/^\uFEFF/,"");
+
+ const filas=text.trim().split("\n");
+
+ let tabla="";
+
+ filas.forEach((fila,i)=>{
+
+ const columnas=fila.split(",");
+
+ tabla+="<tr>";
+
+ columnas.forEach(col=>{
+ tabla+="<td>"+col+"</td>";
+ });
+
+ tabla+="</tr>";
+
+ });
+
+ document.getElementById("ranking").innerHTML=tabla;
+
+}
+
+cargarRanking();
 
 </script>
 
