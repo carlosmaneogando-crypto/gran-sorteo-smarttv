@@ -172,7 +172,9 @@ const text = await res.text();
 
 const filas = text.trim().split("\n");
 
-const datos = filas[1].split(",");
+// Detectar separador automáticamente (coma o punto y coma)
+const separador = filas[1].includes(";") ? ";" : ",";
+const datos = filas[1].split(separador);
 
 const realizados = Number(datos[0]);
 const faltantes = Number(datos[1]);
