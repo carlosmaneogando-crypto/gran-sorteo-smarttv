@@ -168,17 +168,27 @@ const rankingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyD
 async function cargarEstado() {
 
 const res = await fetch(estadoCSV);
-const text = await res.text();
+let text = await res.text();
 
-const filas = text.trim().split("\n");
+// limpiar BOM invisible de Google Sheets si existe
+text = text.replace(/^﻿/,"");
 
-// Detectar separador automáticamente (coma o punto y coma)
-const separador = filas[1].includes(";") ? ";" : ",";
-const datos = filas[1].split(separador);
+const filas = text.trim().split("
+");
 
-const realizados = Number(datos[0].replace(/\r/g,"").trim());
-const faltantes = Number(datos[1].replace(/\r/g,"").trim());
-const estado = datos[2].replace(/\r/g,"").trim();
+// detectar separador automático
+const separador = filas[0].includes(";") ? ";" : ",";
+
+// normalmente la fila 1 es encabezado y la fila 2 tiene los datos
+let datos = filas[1].split(separador);
+
+// limpieza adicional de caracteres invisibles
+const realizados = Number(datos[0].replace(/
+/g,"").trim());
+const faltantes = Number(datos[1].replace(/
+/g,"").trim());
+const estado = datos[2].replace(/
+/g,"").trim();
 
 if(!isNaN(realizados)){
 
