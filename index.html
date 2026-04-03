@@ -172,7 +172,7 @@ const text = await res.text();
 
 const filas = text.trim().split("\n");
 
-const datos = filas[1].split(",");
+const datos = filas.find(f => f.trim() !== "").split(",");
 
 const realizados = Number(datos[0]);
 const faltantes = Number(datos[1]);
