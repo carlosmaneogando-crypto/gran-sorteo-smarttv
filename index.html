@@ -1,226 +1,354 @@
 <!DOCTYPE html>
+<html>
+
 <html lang="es">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Gran Sorteo Competitivo</title>
+<title>Gran Sorteo Smart TV</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sorteo Smart TV</title>
 
 <style>
 
 body{
- font-family:Arial;
- background:#0f172a;
- color:white;
- text-align:center;
+font-family: Arial;
+background: linear-gradient(180deg,#0d47a1,#1565c0);
+color:white;
+text-align:center;
+margin:0;
+padding:0;
 }
 
-.container{
- max-width:900px;
- margin:auto;
- background:#1e293b;
- padding:30px;
- border-radius:20px;
+header{
+font-size:32px;
+font-weight:bold;
+margin-top:20px;
 }
 
-h1{
- font-size:42px;
+.subtitulo{
+font-size:20px;
+margin-bottom:10px;
 }
 
-h2{
- font-size:24px;
+.countdown{
+font-size:28px;
+font-weight:bold;
+color:#FFD700;
+margin:20px;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#0f172a,#1e293b);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
 }
 
-.timer{
- font-size:26px;
- margin-top:15px;
+.aviso{
+color:red;
+font-weight:bold;
+margin:10px;
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 25px;
+  margin: 20px;
+  width: 320px;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
+  animation: fadeIn 1s ease forwards;
 }
 
-.progress-bar{
- width:100%;
- height:30px;
- background:#334155;
- border-radius:20px;
- margin-top:10px;
- overflow:hidden;
+.progreso-container{
+width:90%;
+margin:auto;
+background:#eee;
+border-radius:30px;
+overflow:hidden;
+.title {
+  font-size: 22px;
+  margin-bottom: 15px;
 }
 
-.progress{
- height:100%;
- width:0%;
- background:#22c55e;
+.progreso{
+height:30px;
+background:linear-gradient(90deg,#00c6ff,#0072ff);
+width:0%;
+transition:1s;
+.progress-bar {
+  width: 100%;
+  height: 18px;
+  border-radius: 20px;
+  background: #334155;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+#contador{
+font-size:22px;
+margin:15px;
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#22c55e,#4ade80);
+  transition: width 1s ease;
+}
+
+input{
+padding:12px;
+width:80%;
+border-radius:10px;
+border:none;
+margin:15px;
+.status {
+  font-size: 18px;
+  margin-top: 10px;
 }
 
 table{
- width:100%;
- margin-top:30px;
- border-collapse:collapse;
+width:95%;
+margin:auto;
+background:white;
+color:black;
+border-radius:12px;
+overflow:hidden;
+.table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 td{
- padding:10px;
- font-size:20px;
+padding:12px;
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+tr:nth-child(even){
+background:#f5f5f5;
+.table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.top{
+background:gold !important;
+font-weight:bold;
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(15px);} 
+  to {opacity:1; transform:translateY(0);} 
 }
 
 </style>
 
 </head>
+
 <body>
 
-<div class="container">
+<header>
 
-<h1>🔥Gran Sorteo Competitivo🔥</h1>
+Gran sorteo: limpia tu aire y gana un Smart TV
 
-<h2>Limpia Tu Aire Acondicionado y Gana un Smart TV 📺</h2>
+</header>
 
-<p>
-Nota: el premio solo se desbloquea al cumplir la meta de 100 clientes antes del tiempo limite.
-</p>
+<div class="subtitulo">
 
-<div class="timer">
-⌛Tiempo restante:
-<span id="contador">cargando...</span>
+Válido en Santo Domingo Este
+
+<div class="card">
+  <div class="title">📊 Progreso del Sorteo</div>
+  <div id="contador">Cargando...</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="barra"></div>
+  </div>
+  <div class="status" id="estado"></div>
 </div>
 
+<div class="countdown" id="countdown"></div>
 
-<h2>📊 Progreso del Sorteo</h2>
+<div class="aviso">
 
-<table>
-
-<tr>
-<td>Servicios realizados</td>
-<td>Faltantes</td>
-<td>Estado</td>
-</tr>
-
-<tr>
-<td id="realizados">--</td>
-<td id="faltantes">--</td>
-<td id="estado">--</td>
-</tr>
-
-</table>
-
-<div class="progress-bar">
-<div id="barra" class="progress"></div>
-</div>
-
-
-<h2>🏆 Ranking de Participantes</h2>
-
-<table id="ranking"></table>
-
+Nota: El premio se desbloquea al llegar a 100 servicios realizados
 
 </div>
 
+<div id="contador">
+
+Servicios realizados: 0 / 100
+
+</div>
+
+<div class="progreso-container">
+
+<div class="progreso" id="barra"></div>
+
+</div>
+
+<input type="text" id="buscar" placeholder="Busca tu código (ej: AC023)">
+
+<div id="resultadoCliente" style="
+background:white;
+color:black;
+width:80%;
+margin:auto;
+padding:20px;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+">
+Busca tu código para ver tu estado
+<div class="card">
+  <div class="title">🏆 Ranking</div>
+  <table class="table" id="ranking"></table>
+</div>
 
 <script>
 
-/* =====================
-   CONTADOR REGRESIVO
-===================== */
+const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=0&single=true&output=csv"
 
-const fechaFinal=new Date();
-fechaFinal.setMonth(fechaFinal.getMonth()+2);
+fetch(url)
+.then(res=>res.text())
+.then(data=>{
 
-function actualizarContador(){
+let filas=data.split("\n")
 
- const ahora=new Date();
- const diferencia=fechaFinal-ahora;
+let clientes=[]
 
- if(diferencia<=0){
 
- document.getElementById("contador").innerText="Tiempo terminado";
- return;
+// 📊 TOTAL SERVICIOS = CELDA I2
+let fila2=filas[1].split(",")
+const estadoCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
 
- }
+let totalServicios=parseInt(fila2[8]) || 0
+const rankingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1573239677&single=true&output=csv";
 
- const dias=Math.floor(diferencia/(1000*60*60*24));
- const horas=Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
- const minutos=Math.floor((diferencia%(1000*60*60))/(1000*60));
- const segundos=Math.floor((diferencia%(1000*60))/1000);
+async function cargarEstado() {
+  const res = await fetch(estadoCSV);
+  const text = await res.text();
 
- document.getElementById("contador").innerText=
- dias+"d "+horas+"h "+minutos+"m "+segundos+"s";
+document.getElementById("contador").innerText=
+"Servicios realizados: "+totalServicios+" / 100"
+  const filas = text.split("\n");
+  const datos = filas[1].split(",");
+
+  const realizados = parseInt(datos[0]);
+  const faltantes = parseInt(datos[1]);
+  const estado = datos[2];
+
+document.getElementById("barra").style.width=
+totalServicios+"%"
+  document.getElementById("contador").innerText = `Servicios realizados: ${realizados}/100`;
+
+  const porcentaje = (realizados/100)*100;
+  document.getElementById("barra").style.width = porcentaje + "%";
+
+// 👤 LISTA CLIENTES DESDE FILA 2 HACIA ABAJO
+
+for(let i=1;i<filas.length;i++){
+
+let columnas=filas[i].split(",")
+
+if(columnas[0]){
+
+clientes.push({
+
+nombre:columnas[0].replace(/"/g,""),
+
+codigo:columnas[1].replace(/"/g,""),
+
+referidos:parseInt(columnas[5])||0,
+
+entradas:parseInt(columnas[6])||0
+
+})
+
+}
+
+  document.getElementById("estado").innerText = `Estado del premio: ${estado}`;
+}
+
+async function cargarRanking() {
+  const res = await fetch(rankingCSV);
+  const text = await res.text();
+
+// 🔍 BUSCADOR PANEL CLIENTE
+
+document.getElementById("buscar").addEventListener("input",function(){
+
+let texto=this.value.toUpperCase()
+
+let resultado=clientes.find(cliente=>
+
+(cliente.nombre+"-"+cliente.codigo)
+.toUpperCase()
+.includes(texto)
+
+)
+
+if(resultado){
+  const filas = text.split("\n").slice(0,10);
+
+document.getElementById("resultadoCliente").innerHTML=
+  let html="";
+
+`
+<b>${resultado.nombre}-${resultado.codigo}</b><br>
+Referidos: ${resultado.referidos}<br>
+Entradas: ${resultado.entradas}<br>
+Estado: Participando ✅
+`
+  filas.forEach(f => {
+    const col = f.split(",");
 
 }
 
-setInterval(actualizarContador,1000);
-actualizarContador();
+else{
 
+document.getElementById("resultadoCliente").innerHTML="Cliente no encontrado"
+    if(col[0]){
+      html += `
+      <tr>
+        <td>${col[0]}</td>
+        <td>👥 ${col[1]}</td>
+        <td>🎟 ${col[2]}</td>
+      </tr>`;
+    }
+  });
 
-/* =====================
-   ESTADO PREMIO CSV
-===================== */
-
-const estadoCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
-
-async function cargarEstado(){
-
- const res=await fetch(estadoCSV);
- let text=await res.text();
-
- text=text.replace(/^\uFEFF/,"");
-
- const filas=text.trim().split("\n");
-
- const separador=filas[0].includes(";")?";":",";
-
- const datos=filas[1].split(separador);
-
- const realizados=Number(datos[0].trim());
- const faltantes=Number(datos[1].trim());
- const estado=datos[2].trim();
-
- document.getElementById("realizados").innerText=realizados;
- document.getElementById("faltantes").innerText=faltantes;
- document.getElementById("estado").innerText=estado;
-
- const porcentaje=(realizados/100)*100;
-
- document.getElementById("barra").style.width=porcentaje+"%";
-
+  document.getElementById("ranking").innerHTML = html;
 }
+
+})
+
+
+})
+
+
+// ⏳ COUNTDOWN
+
+const fechaFinal=new Date("May 30, 2026 23:59:59").getTime()
+
+setInterval(()=>{
+
+let ahora=new Date().getTime()
+
+let distancia=fechaFinal-ahora
+
+let dias=Math.floor(distancia/(1000*60*60*24))
+
+let horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60))
+
+document.getElementById("countdown").innerText=
+
+"⏳ Tiempo restante: "+dias+" días "+horas+" horas"
+
+},1000)
 
 cargarEstado();
-
-
-/* =====================
-   RANKING CSV
-===================== */
-
-const rankingCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=0&single=true&output=csv";
-
-async function cargarRanking(){
-
- const res=await fetch(rankingCSV);
- let text=await res.text();
-
- text=text.replace(/^\uFEFF/,"");
-
- const filas=text.trim().split("\n");
-
- let tabla="";
-
- filas.forEach((fila,i)=>{
-
- const columnas=fila.split(",");
-
- tabla+="<tr>";
-
- columnas.forEach(col=>{
- tabla+="<td>"+col+"</td>";
- });
-
- tabla+="</tr>";
-
- });
-
- document.getElementById("ranking").innerHTML=tabla;
-
-}
-
 cargarRanking();
 
 </script>
