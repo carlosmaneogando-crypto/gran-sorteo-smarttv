@@ -224,8 +224,20 @@ html += `
 
 function iniciarCountdown(){
 
-const fechaObjetivo = new Date();
-fechaObjetivo.setMonth(fechaObjetivo.getMonth()+2);
+let fechaGuardada = localStorage.getItem("fechaObjetivoSorteo");
+
+if(!fechaGuardada){
+
+ const nuevaFecha = new Date();
+ nuevaFecha.setMonth(nuevaFecha.getMonth()+2);
+
+ localStorage.setItem("fechaObjetivoSorteo", nuevaFecha.toISOString());
+
+ fechaGuardada = nuevaFecha.toISOString();
+
+}
+
+const fechaObjetivo = new Date(fechaGuardada);
 
 setInterval(()=>{
 
