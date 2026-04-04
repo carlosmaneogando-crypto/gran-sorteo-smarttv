@@ -159,11 +159,38 @@ Nota: el premio solo se desbloquea al cumplir la meta de 100 clientes antes del 
 
 </div>
 
+<div class="card">
+
+<div class="title">🔍 Consulta tu estado en el concurso</div>
+
+<input 
+type="text"
+id="busquedaCodigo"
+placeholder="🔍 Escribe tu código para ver tu estado en el concurso"
+style="
+width:100%;
+padding:10px;
+border-radius:10px;
+border:none;
+outline:none;
+font-size:16px;
+margin-bottom:10px;
+"
+>
+
+<div id="sugerencias"></div>
+
+<div id="resultadoBusqueda" style="margin-top:10px;"></div>
+
+</div>
+  
 <script>
 
 const estadoCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1155813315&single=true&output=csv";
 
 const rankingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=1573239677&single=true&output=csv";
+
+const buscadorCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=759518548&single=true&output=csv";
 
 async function cargarEstado() {
 
@@ -222,6 +249,91 @@ html += `
 
 }
 
+let datosBuscador = [];
+
+async function cargarBuscador(){
+
+const res = await fetch(buscadorCSV);
+const text = await res.text();
+
+datosBuscador = text
+.trim()
+.split("\n")
+.map(fila => fila.split(","));
+
+}
+
+function buscarCodigo(){
+
+const input = document
+.getElementById("busquedaCodigo")
+.value
+.trim()
+.toLowerCase();
+
+const sugerenciasBox = document.getElementById("sugerencias");
+const resultadoBox = document.getElementById("resultadoBusqueda");
+
+if(input === ""){
+
+sugerenciasBox.innerHTML = "";
+resultadoBox.innerHTML = "";
+
+return;
+
+}
+
+const coincidencias = datosBuscador
+.filter(fila => fila[0].toLowerCase().includes(input))
+.slice(0,5);
+
+let htmlSugerencias = "";
+
+coincidencias.forEach(fila => {
+
+htmlSugerencias += `
+<div style="padding:6px; cursor:pointer;"
+onclick="seleccionarCodigo('${fila[0]}')">
+${fila[0]}
+</div>
+`;
+
+});
+
+sugerenciasBox.innerHTML = htmlSugerencias;
+
+const exacto = datosBuscador.find(
+fila => fila[0].toLowerCase() === input
+);
+
+if(exacto){
+
+resultadoBox.innerHTML = `
+🔍 búsqueda: ${exacto[0]}<br><br>
+
+👤 Cliente : ${exacto[0]}<br>
+👥 Referidos : ${exacto[1]}<br>
+🎟 Entradas : ${exacto[2]}<br>
+📺 Estado : ${exacto[3]}
+`;
+
+}else{
+
+resultadoBox.innerHTML =
+"Este cliente No está registrado 🤔.";
+
+}
+
+}
+
+function seleccionarCodigo(codigo){
+
+document.getElementById("busquedaCodigo").value = codigo;
+
+buscarCodigo();
+
+}
+
 function iniciarCountdown(){
 
 let fechaGuardada = localStorage.getItem("fechaObjetivoSorteo");
@@ -257,7 +369,12 @@ document.getElementById("countdown").innerText =
 
 cargarEstado();
 cargarRanking();
+cargarBuscador();
 iniciarCountdown();
+
+document
+.getElementById("busquedaCodigo")
+.addEventListener("input", buscarCodigo);
 
 </script>
 
