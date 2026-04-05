@@ -192,6 +192,8 @@ const rankingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyD
 
 const buscadorCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=759518548&single=true&output=csv";
 
+const contadorCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaMGQvJBcyDYwQ0qBgrQXfttwcUjjUyoBCDN5qhEzUPczBQrAc36v7jNqv-gjnirNYYrvuI1ie3whW/pub?gid=2060213803&single=true&output=csv";
+
 async function cargarEstado() {
 
 const res = await fetch(estadoCSV);
@@ -334,34 +336,34 @@ buscarCodigo();
 
 }
 
-function iniciarCountdown(){
+async function iniciarCountdown(){
 
-let fechaGuardada = localStorage.getItem("fechaObjetivoSorteo");
+const res = await fetch(contadorCSV);
+const text = await res.text();
 
-if(!fechaGuardada){
-
- const nuevaFecha = new Date();
- nuevaFecha.setMonth(nuevaFecha.getMonth()+2);
-
- localStorage.setItem("fechaObjetivoSorteo", nuevaFecha.toISOString());
-
- fechaGuardada = nuevaFecha.toISOString();
-
-}
-
-const fechaObjetivo = new Date(fechaGuardada);
+const fechaObjetivo = new Date(text.trim());
 
 setInterval(()=>{
 
 const ahora = new Date();
 const diferencia = fechaObjetivo - ahora;
 
+if(diferencia <= 0){
+
+document.getElementById("countdown").innerText =
+"⌛Tiempo restante: FINALIZADO⌛";
+
+return;
+
+}
+
 const dias = Math.floor(diferencia/(1000*60*60*24));
 const horas = Math.floor((diferencia/(1000*60*60))%24);
 const minutos = Math.floor((diferencia/(1000*60))%60);
+const segundos = Math.floor((diferencia/1000)%60);
 
 document.getElementById("countdown").innerText =
-`⌛Tiempo restante: ${dias} días ${horas} horas ${minutos} minutos⌛`;
+`⌛Tiempo restante: ${dias} días ${horas} horas ${minutos} minutos ${segundos} segundos⌛`;
 
 },1000);
 
